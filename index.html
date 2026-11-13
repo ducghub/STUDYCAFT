@@ -1,0 +1,1049 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StudyCraft 3.0 - Minecraft Study RPG</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --green:#69a83d;
+  --darkgreen:#477b2c;
+  --wood:#98663d;
+  --panel:#c6c6c6;
+  --ink:#292929;
+  --gold:#f4c542;
+}
+
+* {box-sizing:border-box;margin:0;padding:0}
+
+body {
+  background:#6d9cce;
+  color:white;
+  font-family:'Roboto Mono',monospace;
+  min-height:100vh;
+}
+
+body.night {background:#17243e}
+
+.pixel {font-family:'Press Start 2P',monospace;line-height:1.8}
+
+.container {max-width:1250px;margin:auto;padding:24px}
+
+header {
+  background:var(--wood);
+  border:5px solid #59371e;
+  box-shadow:0 7px #3c2718;
+  padding:18px 22px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+  flex-wrap:wrap;
+}
+
+.logo {font-size:17px;color:white}
+.logo span {color:#a5e65b}
+
+.header-right {display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+
+button,select,input {
+  font-family:'Roboto Mono',monospace;
+}
+
+button {
+  cursor:pointer;
+  border:3px solid #363636;
+  border-top-color:white;
+  border-left-color:white;
+  background:#a4a4a4;
+  color:#222;
+  padding:11px 14px;
+  font-weight:bold;
+  box-shadow:3px 3px #444;
+  transition:.15s;
+}
+
+button:hover {filter:brightness(1.12);transform:translateY(-2px)}
+button:active {transform:translate(2px,2px);box-shadow:none}
+
+.green-btn {background:#66aa3e;color:white}
+.gold-btn {background:#d9a72c;color:#282015}
+.red-btn {background:#bd5555;color:white}
+.blue-btn {background:#568dc2;color:white}
+
+.hero {
+  margin:30px 0;
+  padding:30px 15px;
+  text-align:center;
+  color:white;
+  text-shadow:3px 3px #444;
+  border:5px solid white;
+  box-shadow:6px 6px #444;
+  background:linear-gradient(
+    #72b7e8 0%,#a8d9f5 60%,
+    #65a33b 60%,#65a33b 100%
+  );
+}
+
+body.night .hero {
+  background:linear-gradient(
+    #192a50 0%,#334c79 60%,
+    #3b672e 60%,#3b672e 100%
+  );
+}
+
+.hero h1 {font-size:clamp(14px,3vw,24px);margin-bottom:12px}
+.hero p {font-size:12px}
+
+.stats {
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:15px;
+  margin-bottom:25px;
+}
+
+.card,.section {
+  background:var(--panel);
+  color:var(--ink);
+  border:4px solid white;
+  border-right-color:#555;
+  border-bottom-color:#555;
+  box-shadow:5px 5px #333;
+}
+
+.card {padding:20px}
+.card p {font-size:11px;margin-bottom:13px;color:#444;font-weight:bold}
+.card h2 {font-size:23px}
+.card:nth-child(1) h2 {color:#568e31}
+.card:nth-child(2) h2 {color:#358d49}
+.card:nth-child(3) h2 {color:#367dbb}
+.card:nth-child(4) h2 {color:#bb8a22}
+
+.content {
+  display:grid;
+  grid-template-columns:1.4fr 1fr;
+  gap:22px;
+  align-items:start;
+}
+
+.section {padding:22px;margin-bottom:22px}
+.section h2 {
+  font-size:11px;
+  font-family:'Press Start 2P',monospace;
+  line-height:2;
+  padding-bottom:13px;
+  border-bottom:3px solid #888;
+  margin-bottom:20px;
+}
+
+.muted {color:#555;font-size:12px}
+.small-title {font-size:11px;font-weight:bold;margin:16px 0 9px}
+
+/* TIMER */
+
+.timer-top {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.phase-label {
+  background:#477b2c;
+  color:white;
+  padding:8px 11px;
+  font-size:11px;
+  font-weight:bold;
+}
+
+.ring-wrap {display:flex;justify-content:center;margin:20px 0}
+
+.ring {
+  width:220px;
+  height:220px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:conic-gradient(#69b83f 0deg,#444 0deg);
+  position:relative;
+  box-shadow:0 5px #444;
+}
+
+.ring::before {
+  content:"";
+  position:absolute;
+  inset:12px;
+  border-radius:50%;
+  background:#bcbcbc;
+  border:5px solid #777;
+}
+
+.ring-inner {
+  z-index:1;
+  text-align:center;
+}
+
+.clock {
+  font-family:'Press Start 2P',monospace;
+  font-size:clamp(24px,4vw,34px);
+  color:#39752d;
+  text-shadow:2px 2px #ddd;
+}
+
+.clock-caption {font-size:10px;margin-top:12px;color:#444}
+
+.controls {
+  display:flex;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:9px;
+  margin:18px 0;
+}
+
+.session-progress {
+  display:flex;
+  gap:8px;
+  justify-content:center;
+  margin:15px 0;
+}
+
+.session-dot {
+  width:19px;height:19px;
+  background:#888;
+  border:3px solid #555;
+}
+
+.session-dot.active {background:#f0c342;border-color:#8c6b19}
+.session-dot.done {background:#69a83d;border-color:#477b2c}
+
+.status {
+  text-align:center;
+  color:#444;
+  font-size:11px;
+  min-height:18px;
+}
+
+/* SETTINGS */
+
+.settings-grid {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:13px;
+}
+
+.field label {
+  display:block;
+  font-size:11px;
+  font-weight:bold;
+  margin-bottom:7px;
+}
+
+.field input,.field select {
+  width:100%;
+  padding:11px;
+  border:3px solid #555;
+  border-top-color:#333;
+  border-left-color:#333;
+  background:#eee;
+  color:#222;
+  outline:none;
+}
+
+.presets {display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.presets button {font-size:11px;padding:9px}
+
+.check-row {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-size:12px;
+  margin-top:16px;
+}
+
+.check-row input {width:17px;height:17px;accent-color:#477b2c}
+
+/* XP */
+
+.xp-panel {
+  background:#dedede;
+  padding:15px;
+  border:3px solid #888;
+}
+
+.xp-info {display:flex;justify-content:space-between;font-size:11px;font-weight:bold;gap:10px}
+
+.xp-bar {
+  height:19px;
+  margin-top:12px;
+  padding:3px;
+  background:#555;
+  border:2px solid #333;
+}
+
+.xp-fill {
+  height:100%;
+  width:0;
+  background:repeating-linear-gradient(
+    90deg,#f5ca3c,#f5ca3c 13px,#dca525 13px,#dca525 26px
+  );
+  transition:.3s;
+}
+
+.achievement {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  background:#dedede;
+  border:2px solid #999;
+  padding:12px;
+  margin-bottom:9px;
+}
+
+.achievement .emoji {font-size:25px}
+.achievement strong {font-size:12px}
+.achievement p {font-size:10px;color:#555;margin-top:5px}
+.locked {opacity:.45;filter:grayscale(1)}
+
+/* TASKS AND HISTORY */
+
+.task-input {display:flex;gap:9px;margin-bottom:17px}
+.task-input input {
+  flex:1;min-width:0;padding:12px;
+  background:#eee;border:3px solid #555;
+}
+
+.task {
+  display:flex;align-items:center;gap:10px;
+  padding:12px;background:#dedede;
+  border:2px solid #999;margin-bottom:8px;
+  color:#333;font-size:12px;
+}
+
+.task input {width:18px;height:18px;accent-color:green}
+.task span {flex:1;overflow-wrap:anywhere}
+.task.done span {text-decoration:line-through;opacity:.5}
+.delete {padding:7px 10px;background:#bd5555;color:white;box-shadow:none}
+
+.history-item {
+  display:flex;justify-content:space-between;gap:10px;
+  background:#dedede;color:#333;
+  padding:11px;margin-bottom:8px;
+  font-size:11px;border:2px solid #999;
+}
+
+.progress {
+  height:19px;background:#555;border:3px solid #333;padding:2px;
+  margin-top:15px;
+}
+
+.progress-bar {
+  height:100%;width:0;
+  background:repeating-linear-gradient(90deg,#69b83f,#69b83f 14px,#4c942e 14px,#4c942e 28px);
+  transition:.3s;
+}
+
+footer {text-align:center;padding:30px 5px;text-shadow:2px 2px #333;font-size:11px}
+
+body.night .section,body.night .card {background:#777b85;color:white}
+body.night .card p {color:#eee}
+
+@media(max-width:850px) {
+  .stats {grid-template-columns:repeat(2,1fr)}
+  .content {grid-template-columns:1fr}
+}
+@media(max-width:480px) {
+  .container {padding:13px}
+  .stats {gap:10px}
+  .card {padding:13px}
+  .card h2 {font-size:18px}
+  .section {padding:14px}
+  .settings-grid {grid-template-columns:1fr}
+  .ring {width:190px;height:190px}
+  .task-input {flex-direction:column}
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<header>
+  <div class="logo pixel">STUDY<span>CRAFT</span> 3.0</div>
+  <div class="header-right">
+    <span id="levelHeader">⭐ LEVEL 1</span>
+    <button onclick="toggleNight()">🌙 DAY / NIGHT</button>
+  </div>
+</header>
+
+<section class="hero">
+  <h1 class="pixel">YOUR STUDY ADVENTURE</h1>
+  <p>Mine your knowledge. Build your future.</p>
+  <br>
+  <p id="date"></p>
+</section>
+
+<section class="stats">
+  <div class="card"><p>📚 TOTAL STUDY TIME</p><h2 id="totalTime">0m</h2></div>
+  <div class="card"><p>✅ COMPLETED SESSIONS</p><h2 id="totalSessions">0</h2></div>
+  <div class="card"><p>⚡ TOTAL XP</p><h2 id="totalXP">0</h2></div>
+  <div class="card"><p>🏆 CURRENT LEVEL</p><h2 id="level">1</h2></div>
+</section>
+
+<div class="content">
+
+<div>
+
+<section class="section">
+  <div class="timer-top">
+    <h2>⏰ FOCUS MODE</h2>
+    <span class="phase-label" id="phaseLabel">FOCUS TIME</span>
+  </div>
+
+  <div class="ring-wrap">
+    <div class="ring" id="ring">
+      <div class="ring-inner">
+        <div class="clock" id="clock">25:00</div>
+        <div class="clock-caption" id="clockCaption">READY TO FOCUS</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="session-progress" id="sessionDots"></div>
+
+  <div class="controls">
+    <button class="green-btn" id="startBtn" onclick="startTimer()">▶ START</button>
+    <button onclick="pauseTimer()">Ⅱ PAUSE</button>
+    <button onclick="resetTimer()">↻ RESET</button>
+    <button class="gold-btn" onclick="skipPhase()">⏭ SKIP</button>
+  </div>
+
+  <p class="status" id="timerStatus">Ready for your next adventure!</p>
+</section>
+
+<section class="section">
+  <h2>⚙️ TIMER SETTINGS</h2>
+
+  <p class="small-title">QUICK PRESETS</p>
+  <div class="presets">
+    <button onclick="setPreset(25,5,15,4)">🍃 25 / 5</button>
+    <button onclick="setPreset(50,10,20,3)">⛏ 50 / 10</button>
+    <button onclick="setPreset(90,15,30,2)">💎 90 / 15</button>
+  </div>
+
+  <p class="small-title">CUSTOM TIMER (MINUTES)</p>
+
+  <div class="settings-grid">
+    <div class="field">
+      <label>🎯 Focus duration</label>
+      <input id="focusInput" type="number" min="1" max="180" value="25">
+    </div>
+    <div class="field">
+      <label>☕ Short break</label>
+      <input id="shortInput" type="number" min="1" max="60" value="5">
+    </div>
+    <div class="field">
+      <label>🌴 Long break</label>
+      <input id="longInput" type="number" min="1" max="90" value="15">
+    </div>
+    <div class="field">
+      <label>🔁 Sessions per cycle</label>
+      <input id="roundInput" type="number" min="1" max="12" value="4">
+    </div>
+  </div>
+
+  <label class="check-row">
+    <input id="autoSwitch" type="checkbox">
+    Automatically start the next session
+  </label>
+
+  <label class="check-row">
+    <input id="soundEnabled" type="checkbox" checked>
+    Sound notification
+  </label>
+
+  <div class="controls">
+    <button class="green-btn" onclick="applySettings()">✓ APPLY SETTINGS</button>
+  </div>
+
+  <p class="muted" id="settingsMessage">Changes will apply to the current timer after you confirm.</p>
+</section>
+
+<section class="section">
+  <h2>📜 QUEST BOARD</h2>
+
+  <div class="task-input">
+    <input id="taskInput" placeholder="Enter your next quest...">
+    <button class="green-btn" onclick="addTask()">+ ADD</button>
+  </div>
+
+  <div id="taskList"></div>
+  <div class="progress"><div class="progress-bar" id="taskProgress"></div></div>
+  <p class="muted" id="taskStats" style="margin-top:10px">0 / 0 quests completed</p>
+</section>
+
+</div>
+
+<div>
+
+<section class="section">
+  <h2>⚡ PLAYER PROFILE</h2>
+
+  <div class="xp-panel">
+    <div class="xp-info">
+      <span id="playerLevel">LEVEL 1</span>
+      <span id="xpText">0 / 100 XP</span>
+    </div>
+    <div class="xp-bar"><div class="xp-fill" id="xpFill"></div></div>
+    <p class="muted" style="margin-top:10px">Complete a focus session to earn 25 XP!</p>
+  </div>
+</section>
+
+<section class="section">
+  <h2>🏆 ACHIEVEMENTS</h2>
+  <div id="achievements"></div>
+</section>
+
+<section class="section">
+  <h2>📊 TODAY'S STATS</h2>
+  <div class="history-item"><span>📖 Study time</span><strong id="todayTime">0 min</strong></div>
+  <div class="history-item"><span>🎯 Sessions</span><strong id="todaySessions">0</strong></div>
+  <div class="history-item"><span>⚡ XP earned</span><strong id="todayXP">0</strong></div>
+</section>
+
+<section class="section">
+  <h2>📜 SESSION HISTORY</h2>
+  <div id="historyList"><p class="muted">No completed sessions yet.</p></div>
+  <button style="margin-top:12px" onclick="clearHistory()">CLEAR HISTORY</button>
+</section>
+
+</div>
+</div>
+
+<footer>
+  <p class="pixel">STUDYCRAFT 3.0</p>
+  <br>
+  <p>Craft your future, one block at a time. ⛏️</p>
+</footer>
+
+</div>
+
+<script>
+
+// ---------- STORAGE ----------
+
+const load = (key, fallback) => {
+  try {
+    const value = localStorage.getItem(key);
+    return value === null ? fallback : JSON.parse(value);
+  } catch {
+    return fallback;
+  }
+};
+
+const save = (key, value) => {
+  localStorage.setItem(key, JSON.stringify(value));
+};
+
+let settings = load("sc_settings", {
+  focus:25, short:5, long:15, rounds:4,
+  auto:false, sound:true
+});
+
+let tasks = load("sc_tasks", []);
+let xp = load("sc_xp", 0);
+let history = load("sc_history", []);
+let sessionCount = load("sc_count", 0);
+let todayData = load("sc_today", {
+  date:new Date().toDateString(), minutes:0, sessions:0, xp:0
+});
+
+// ---------- TIMER STATE ----------
+
+let phase = "focus";
+let remaining = settings.focus * 60;
+let totalSeconds = remaining;
+let running = false;
+let deadline = null;
+let interval = null;
+let completedThisCycle = 0;
+
+function phaseDuration(p) {
+  if(p === "focus") return settings.focus * 60;
+  if(p === "short") return settings.short * 60;
+  return settings.long * 60;
+}
+
+function phaseName() {
+  return phase === "focus" ? "FOCUS TIME" :
+    phase === "short" ? "SHORT BREAK" : "LONG BREAK";
+}
+
+function updateTimerUI() {
+  const mins = Math.floor(remaining / 60);
+  const secs = remaining % 60;
+
+  document.getElementById("clock").textContent =
+    String(mins).padStart(2,"0") + ":" +
+    String(secs).padStart(2,"0");
+
+  document.getElementById("phaseLabel").textContent = phaseName();
+
+  document.getElementById("clockCaption").textContent =
+    phase === "focus" ? "TIME TO MINE KNOWLEDGE" : "REST AND RECOVER";
+
+  const percentage = totalSeconds > 0
+    ? (totalSeconds - remaining) / totalSeconds * 360
+    : 0;
+
+  document.getElementById("ring").style.background =
+    `conic-gradient(#69b83f ${percentage}deg,#444 ${percentage}deg)`;
+
+  document.getElementById("startBtn").textContent =
+    running ? "▶ RUNNING" : "▶ START";
+
+  renderDots();
+}
+
+function renderDots() {
+  const holder = document.getElementById("sessionDots");
+  holder.innerHTML = "";
+
+  for(let i = 0; i < settings.rounds; i++) {
+    const dot = document.createElement("div");
+    dot.className = "session-dot";
+
+    if(i < completedThisCycle) dot.classList.add("done");
+    if(i === completedThisCycle && phase === "focus") dot.classList.add("active");
+
+    holder.appendChild(dot);
+  }
+}
+
+function setPhase(newPhase) {
+  pauseTimer();
+  phase = newPhase;
+  remaining = phaseDuration(phase);
+  totalSeconds = remaining;
+  updateTimerUI();
+}
+
+// ---------- TIMER ENGINE ----------
+
+function startTimer() {
+  if(running) return;
+
+  if(remaining <= 0) return;
+
+  running = true;
+  deadline = Date.now() + remaining * 1000;
+
+  document.getElementById("timerStatus").textContent =
+    phase === "focus" ? "⛏ Mining knowledge..." : "🌿 Recovering energy...";
+
+  interval = setInterval(tick, 200);
+  updateTimerUI();
+}
+
+function tick() {
+  remaining = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
+  updateTimerUI();
+
+  if(remaining <= 0) finishPhase();
+}
+
+function pauseTimer() {
+  if(running && deadline) {
+    remaining = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
+  }
+
+  running = false;
+  deadline = null;
+
+  if(interval !== null) clearInterval(interval);
+  interval = null;
+
+  updateTimerUI();
+}
+
+function resetTimer() {
+  pauseTimer();
+  remaining = phaseDuration(phase);
+  totalSeconds = remaining;
+
+  document.getElementById("timerStatus").textContent = "Timer reset!";
+  updateTimerUI();
+}
+
+function finishPhase() {
+  if(!running) return;
+
+  pauseTimer();
+  remaining = 0;
+  updateTimerUI();
+
+  if(phase === "focus") {
+    completeFocus();
+  } else {
+    document.getElementById("timerStatus").textContent =
+      "Break completed! Ready for another quest?";
+
+    setPhase("focus");
+  }
+
+  playSound();
+
+  if(settings.auto) startTimer();
+}
+
+function skipPhase() {
+  pauseTimer();
+
+  if(phase === "focus") {
+    nextAfterFocus(false);
+  } else {
+    setPhase("focus");
+  }
+
+  document.getElementById("timerStatus").textContent = "Phase skipped.";
+}
+
+function completeFocus() {
+  xp += 25;
+  sessionCount++;
+
+  todayData.minutes += settings.focus;
+  todayData.sessions++;
+  todayData.xp += 25;
+
+  save("sc_xp",xp);
+  save("sc_count",sessionCount);
+  save("sc_today",todayData);
+
+  history.unshift({
+    date:new Date().toLocaleString("vi-VN"),
+    minutes:settings.focus,
+    xp:25
+  });
+
+  history = history.slice(0,50);
+  save("sc_history",history);
+
+  updateProfile();
+  renderHistory();
+
+  document.getElementById("timerStatus").textContent =
+    "🎉 Quest completed! +25 XP";
+
+  completedThisCycle++;
+  nextAfterFocus(true);
+}
+
+function nextAfterFocus(completed) {
+  if(completedThisCycle >= settings.rounds) {
+    completedThisCycle = 0;
+    setPhase("long");
+  } else {
+    setPhase("short");
+  }
+}
+
+// ---------- SETTINGS ----------
+
+function readNumber(id, min, max) {
+  const value = Number(document.getElementById(id).value);
+  if(!Number.isInteger(value) || value < min || value > max) {
+    throw new Error(`Value must be between ${min} and ${max}.`);
+  }
+  return value;
+}
+
+function applySettings() {
+  try {
+    const next = {
+      focus:readNumber("focusInput",1,180),
+      short:readNumber("shortInput",1,60),
+      long:readNumber("longInput",1,90),
+      rounds:readNumber("roundInput",1,12),
+      auto:document.getElementById("autoSwitch").checked,
+      sound:document.getElementById("soundEnabled").checked
+    };
+
+    settings = next;
+    save("sc_settings",settings);
+
+    pauseTimer();
+    phase = "focus";
+    completedThisCycle = 0;
+    remaining = phaseDuration("focus");
+    totalSeconds = remaining;
+
+    document.getElementById("settingsMessage").textContent =
+      "✓ Settings successfully applied!";
+
+    updateTimerUI();
+  } catch(error) {
+    document.getElementById("settingsMessage").textContent =
+      "⚠ " + error.message;
+  }
+}
+
+function fillSettings() {
+  document.getElementById("focusInput").value = settings.focus;
+  document.getElementById("shortInput").value = settings.short;
+  document.getElementById("longInput").value = settings.long;
+  document.getElementById("roundInput").value = settings.rounds;
+  document.getElementById("autoSwitch").checked = settings.auto;
+  document.getElementById("soundEnabled").checked = settings.sound;
+}
+
+function setPreset(f,s,l,r) {
+  document.getElementById("focusInput").value = f;
+  document.getElementById("shortInput").value = s;
+  document.getElementById("longInput").value = l;
+  document.getElementById("roundInput").value = r;
+  applySettings();
+}
+
+// ---------- SOUND ----------
+
+function playSound() {
+  if(!settings.sound) return;
+
+  try {
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if(!AudioContext) return;
+
+    const ctx = new AudioContext();
+    [523,659,784].forEach((frequency,i) => {
+      const oscillator = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      oscillator.frequency.value = frequency;
+      oscillator.connect(gain);
+      gain.connect(ctx.destination);
+
+      const start = ctx.currentTime + i * .16;
+      gain.gain.setValueAtTime(.001,start);
+      gain.gain.linearRampToValueAtTime(.12,start+.03);
+      gain.gain.exponentialRampToValueAtTime(.001,start+.3);
+
+      oscillator.start(start);
+      oscillator.stop(start+.32);
+    });
+
+    setTimeout(() => ctx.close(),1200);
+  } catch {}
+}
+
+// ---------- XP AND ACHIEVEMENTS ----------
+
+function updateProfile() {
+  const level = Math.floor(xp / 100) + 1;
+  const currentXP = xp % 100;
+
+  document.getElementById("level").textContent = level;
+  document.getElementById("levelHeader").textContent = "⭐ LEVEL " + level;
+  document.getElementById("playerLevel").textContent = "LEVEL " + level;
+  document.getElementById("totalXP").textContent = xp;
+  document.getElementById("xpText").textContent = currentXP + " / 100 XP";
+  document.getElementById("xpFill").style.width = currentXP + "%";
+
+  const totalMinutes = history.reduce((sum,item) => sum + item.minutes,0);
+
+  document.getElementById("totalTime").textContent =
+    totalMinutes >= 60
+      ? Math.floor(totalMinutes/60) + "h " + totalMinutes%60 + "m"
+      : totalMinutes + "m";
+
+  document.getElementById("totalSessions").textContent = sessionCount;
+
+  document.getElementById("todayTime").textContent = todayData.minutes + " min";
+  document.getElementById("todaySessions").textContent = todayData.sessions;
+  document.getElementById("todayXP").textContent = todayData.xp;
+
+  renderAchievements(level);
+}
+
+function renderAchievements(level) {
+  const items = [
+    {icon:"🌱",name:"First Steps",desc:"Complete your first study session.",ok:sessionCount>=1},
+    {icon:"⛏️",name:"Miner",desc:"Complete 5 study sessions.",ok:sessionCount>=5},
+    {icon:"💎",name:"Diamond Mind",desc:"Complete 20 study sessions.",ok:sessionCount>=20},
+    {icon:"👑",name:"Master Builder",desc:"Reach level 5.",ok:level>=5},
+    {icon:"🔥",name:"Knowledge Master",desc:"Complete 50 study sessions.",ok:sessionCount>=50}
+  ];
+
+  const holder = document.getElementById("achievements");
+  holder.innerHTML = "";
+
+  items.forEach(item => {
+    const div = document.createElement("div");
+    div.className = "achievement" + (item.ok ? "" : " locked");
+
+    const emoji = document.createElement("span");
+    emoji.className = "emoji";
+    emoji.textContent = item.icon;
+
+    const info = document.createElement("div");
+    const title = document.createElement("strong");
+    title.textContent = item.name + (item.ok ? " ✓" : " 🔒");
+
+    const desc = document.createElement("p");
+    desc.textContent = item.desc;
+
+    info.append(title,desc);
+    div.append(emoji,info);
+    holder.appendChild(div);
+  });
+}
+
+// ---------- TASKS ----------
+
+function addTask() {
+  const input = document.getElementById("taskInput");
+  const value = input.value.trim();
+
+  if(!value) return;
+
+  tasks.push({text:value,done:false});
+  input.value = "";
+
+  save("sc_tasks",tasks);
+  renderTasks();
+}
+
+function toggleTask(index) {
+  tasks[index].done = !tasks[index].done;
+  save("sc_tasks",tasks);
+  renderTasks();
+}
+
+function deleteTask(index) {
+  tasks.splice(index,1);
+  save("sc_tasks",tasks);
+  renderTasks();
+}
+
+function renderTasks() {
+  const holder = document.getElementById("taskList");
+  holder.innerHTML = "";
+
+  tasks.forEach((task,index) => {
+    const div = document.createElement("div");
+    div.className = "task" + (task.done ? " done" : "");
+
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.checked = task.done;
+    checkbox.addEventListener("change",() => toggleTask(index));
+
+    const span = document.createElement("span");
+    span.textContent = "📦 " + task.text;
+
+    const button = document.createElement("button");
+    button.className = "delete";
+    button.textContent = "X";
+    button.addEventListener("click",() => deleteTask(index));
+
+    div.append(checkbox,span,button);
+    holder.appendChild(div);
+  });
+
+  const done = tasks.filter(t => t.done).length;
+  const percent = tasks.length ? done/tasks.length*100 : 0;
+
+  document.getElementById("taskProgress").style.width = percent + "%";
+  document.getElementById("taskStats").textContent =
+    done + " / " + tasks.length + " quests completed";
+}
+
+// ---------- HISTORY ----------
+
+function renderHistory() {
+  const holder = document.getElementById("historyList");
+  holder.innerHTML = "";
+
+  if(!history.length) {
+    holder.textContent = "No completed sessions yet.";
+    holder.className = "muted";
+    return;
+  }
+
+  history.slice(0,8).forEach(item => {
+    const div = document.createElement("div");
+    div.className = "history-item";
+
+    const date = document.createElement("span");
+    date.textContent = "⛏ " + item.date;
+
+    const result = document.createElement("strong");
+    result.textContent = item.minutes + "m | +" + item.xp + " XP";
+
+    div.append(date,result);
+    holder.appendChild(div);
+  });
+}
+
+function clearHistory() {
+  if(!confirm("Clear your study history?")) return;
+
+  history = [];
+  sessionCount = 0;
+  xp = 0;
+  todayData = {date:new Date().toDateString(),minutes:0,sessions:0,xp:0};
+
+  save("sc_history",history);
+  save("sc_count",sessionCount);
+  save("sc_xp",xp);
+  save("sc_today",todayData);
+
+  updateProfile();
+  renderHistory();
+}
+
+// ---------- OTHER ----------
+
+function toggleNight() {
+  document.body.classList.toggle("night");
+  localStorage.setItem(
+    "sc_night",
+    document.body.classList.contains("night") ? "1" : "0"
+  );
+}
+
+function updateDate() {
+  document.getElementById("date").textContent =
+    new Date().toLocaleDateString("vi-VN",{
+      weekday:"long",year:"numeric",month:"long",day:"numeric"
+    });
+}
+
+if(todayData.date !== new Date().toDateString()) {
+  todayData = {date:new Date().toDateString(),minutes:0,sessions:0,xp:0};
+  save("sc_today",todayData);
+}
+
+if(localStorage.getItem("sc_night") === "1") {
+  document.body.classList.add("night");
+}
+
+fillSettings();
+updateDate();
+updateTimerUI();
+renderTasks();
+updateProfile();
+renderHistory();
+
+document.getElementById("taskInput").addEventListener("keydown",e=>{
+  if(e.key === "Enter") addTask();
+});
+
+</script>
+
+</body>
+</html>
